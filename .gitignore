@@ -1,0 +1,6 @@
+*.jpg
+*.png
+credentials.json
+token.pickle
+.venv
+__pycache__
