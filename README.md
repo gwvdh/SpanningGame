@@ -36,4 +36,8 @@ python scoreboard.py
 
 This will start the Flask server on port 5000.
 
-To stop the application, press `Ctrl + C` in the terminal.
+Make a photo using the Google Drive app directly to the folder containing the files. This will automatically download the photo and add it to the list of files.
+
+# Example instance
+
+![Example instance](tsp_instances/spanning_tree.jpg)
