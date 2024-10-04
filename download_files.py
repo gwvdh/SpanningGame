@@ -6,14 +6,14 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow 
 from google.auth.transport.requests import Request 
 from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.errors import HttpError
 import io
-  
-  
-# Define the SCOPES. If modifying it, 
-# delete the token.pickle file. 
+
+
+# Define the SCOPES. If modifying it, delete the token.pickle file. 
 SCOPES = ['https://www.googleapis.com/auth/drive'] 
-  
-  
+
+
 def download_file(file_id, file_name, service):
     request = service.files().get_media(fileId=file_id)
     fh = io.FileIO(file_name, 'wb')
@@ -25,34 +25,20 @@ def download_file(file_id, file_name, service):
     fh.close()
 
 
-# Create a function getFileList with  
-# parameter N which is the length of  
-# the list of files. 
 def getFileList(folder_id: str): 
-  
-    # Variable creds will store the user access token. 
-    # If no valid token found, we will create one. 
     creds = None
-  
-    # The file token.pickle stores the  
-    # user's access and refresh tokens. It is 
-    # created automatically when the authorization  
-    # flow completes for the first time. 
-  
+
     # Check if file token.pickle exists 
     if os.path.exists('token.pickle'): 
   
-        # Read the token from the file and  
-        # store it in the variable creds 
+        # Read the token from the file and store it in the variable creds 
         with open('token.pickle', 'rb') as token: 
             creds = pickle.load(token) 
   
-    # If no valid credentials are available,  
-    # request the user to log in. 
+    # If no valid credentials are available, request the user to log in. 
     if not creds or not creds.valid: 
   
-        # If token is expired, it will be refreshed, 
-        # else, we will request a new one. 
+        # If token is expired, it will be refreshed, else, we will request a new one. 
         if creds and creds.expired and creds.refresh_token: 
             creds.refresh(Request()) 
         else: 
@@ -60,8 +46,7 @@ def getFileList(folder_id: str):
                 'credentials.json', SCOPES) 
             creds = flow.run_local_server(port=0) 
   
-        # Save the access token in token.pickle  
-        # file for future usage 
+        # Save the access token in token.pickle file for future usage 
         with open('token.pickle', 'wb') as token: 
             pickle.dump(creds, token) 
   
@@ -86,7 +71,7 @@ def getFileList(folder_id: str):
                 name = name.replace(".jpg", "").replace("-", " ")
                 try:
                     download_file(item['id'], f"user_input/{item['name']}", service)
-                except Exception as e:
+                except HttpError as e:
                     break
                 print(f"File {item['name']} downloaded.")
                 results.append({'type': type, 'name': name, 'filename': item['name']})

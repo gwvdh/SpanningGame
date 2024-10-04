@@ -103,15 +103,11 @@ def distance_from_line(x, y, x1, y1, x2, y2) -> int:
     return int(math.sqrt(dx * dx + dy * dy))
 
 
-def get_score(user_img, instance_type, user_img_name):
-  tsp_points, file_name = tum_logo(create_file=False)
-  if int(instance_type) == 2:
-    tsp_points, file_name = spanning_tree(create_file=False)
-
-  image_1 = user_img
-  image_2 = file_name
-
-
+def get_edged_image(image_1, image_2, max_features=10000, feature_retention=0.01):
+  """
+  Align the user image to the instance image. 
+  Find the edges of the user image.
+  """
   im1 =  cv2.imread(image_1);
 
   lab= cv2.cvtColor(im1, cv2.COLOR_BGR2LAB)
@@ -133,7 +129,7 @@ def get_score(user_img, instance_type, user_img_name):
   
   im2 =  cv2.imread(image_2);
 
-  aligned, warp_matrix = featureAlign(im1, im2)
+  aligned, warp_matrix = featureAlign(im1, im2, max_features=max_features, feature_retention=feature_retention)
   cv2.imwrite("aligned.jpg", aligned, params=[cv2.IMWRITE_JPEG_QUALITY, 90])
   print(warp_matrix)
 
@@ -147,18 +143,24 @@ def get_score(user_img, instance_type, user_img_name):
     
   # Find Canny edges 
   edged = cv2.Canny(gray, 30, 100) 
-    
-  # Finding Contours 
-  # Use a copy of the image e.g. edged.copy() 
-  # since findContours alters the image 
-  contours, hierarchy = cv2.findContours(edged,  
-      cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
-    
+  return edged
 
+
+def get_score(user_img, instance_type, user_img_name):
+  tsp_points, file_name = tum_logo(create_file=False)
+  if int(instance_type) == 2:
+    tsp_points, file_name = spanning_tree(create_file=False)
+
+  image_1 = user_img
+  image_2 = file_name
+
+  edged = get_edged_image(image_1, image_2)
+    
+  # Insert known points
   for point in tsp_points:
     edged = cv2.circle(edged, point, 15, 255, -1)
 
-  print(f'{len(edged)} | {edged}')
+  # Brute force search for connections
   connections = []
   for point_1 in tsp_points:
     tsp_points_2 = tsp_points.copy()
@@ -193,3 +195,7 @@ def get_score(user_img, instance_type, user_img_name):
   # cv2.waitKey(0) 
   return score
   
+
+
+if __name__ == '__main__':
+  get_score("user_input/1 Annaluisa.jpg", 1, "tsp_instances/tum_logo.jpg")
