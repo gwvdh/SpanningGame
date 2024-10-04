@@ -28,7 +28,12 @@ To run the application, execute the following command:
 python main.py
 ```
 
-This will start the Flask server and download the files from Google Drive.
-The application will then run indefinitely, continuously checking for new files.
+The Flask server has to be started separately.: 
+
+```
+python scoreboard.py
+```
+
+This will start the Flask server on port 5000.
 
 To stop the application, press `Ctrl + C` in the terminal.
