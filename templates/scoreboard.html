@@ -1,0 +1,36 @@
+<!-- scoreboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open day 2024</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script> -->
+    <meta http-equiv="refresh" content="5">
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-8 text-center">Scoreboard Rankings</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for scoreboard in scoreboards %}
+                <div class="w-full max-w-sm border border-gray-200 rounded-lg">
+                    <div class="border-b border-gray-200 bg-white text-black px-4 py-5 sm:px-6">
+                        <h2 class="text-center text-lg font-bold">{{ scoreboard.title }}</h2>
+                    </div>
+                    <div class="card-content p-0 divide-y">
+                        {% for entry in scoreboard.entries %}
+                            <div class="flex items-center p-4 transition-colors hover:bg-muted-50 {% if loop.index0 % 2 == 0 %}bg-background{% else %}bg-muted-20{% endif %}">
+                                <span class="w-8 text-center font-semibold text-muted-foreground">{{ loop.index }}</span>
+                                <span class="flex-grow font-medium">{{ entry.name }}</span>
+                                <span class="font-bold text-primary">{{ entry.score }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

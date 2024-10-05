@@ -45,7 +45,7 @@
 1,Valentin 2,1857.11,1 Valentin-2.jpg
 2,Anna luisa,2664.36,2 Anna-luisa.jpg
 2,Elena K,2190.28,2 Elena-K.jpg
-22,Victoria,2310.42,2 Victoria.jpg
+2,Victoria,2310.42,2 Victoria.jpg
 2,Lukas H5,2217.04,2 Lukas-H5.jpg
 2,Zoe6,2198.07,2 Zoe6.jpg
 2,Huan2,2463.35,2 Huan2.jpg
