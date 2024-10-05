@@ -146,21 +146,7 @@ def get_edged_image(image_1, image_2, max_features=10000, feature_retention=0.01
   return edged
 
 
-def get_score(user_img, instance_type, user_img_name):
-  tsp_points, file_name = tum_logo(create_file=False)
-  if int(instance_type) == 2:
-    tsp_points, file_name = spanning_tree(create_file=False)
-
-  image_1 = user_img
-  image_2 = file_name
-
-  edged = get_edged_image(image_1, image_2)
-    
-  # Insert known points
-  for point in tsp_points:
-    edged = cv2.circle(edged, point, 15, 255, -1)
-
-  # Brute force search for connections
+def find_connections(edged, tsp_points):
   connections = []
   for point_1 in tsp_points:
     tsp_points_2 = tsp_points.copy()
@@ -182,8 +168,31 @@ def get_score(user_img, instance_type, user_img_name):
         if (point_1, point_2) not in connections and (point_2, point_1) not in connections:
           print("Found a connection:", tsp_points.index(point_1), tsp_points.index(point_2))
           connections.append((point_1, point_2))
+  return connections
+
+
+def get_score(user_img, instance_type, user_img_name):
+  tsp_points, file_name = tum_logo(create_file=False)
+  if int(instance_type) == 2:
+    tsp_points, file_name = spanning_tree(create_file=False)
+
+  image_1 = user_img
+  image_2 = file_name
+
+  edged = get_edged_image(image_1, image_2)
+    
+  # Insert known points
+  for point in tsp_points:
+    edged = cv2.circle(edged, point, 15, 255, -1)
+
+  # Brute force search for connections
+  connections = find_connections(edged, tsp_points)
+
+  # Show the point indices
   for point in tsp_points:
     edged = cv2.putText(edged, f'{tsp_points.index(point)}', (point[0]-5, point[1]+6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 100, 2)
+
+  # Calculate the score
   score: float = 0
   for p_1, p_2 in connections:
     score += math.sqrt((p_1[0] - p_2[0])**2 + (p_1[1] - p_2[1])**2)
